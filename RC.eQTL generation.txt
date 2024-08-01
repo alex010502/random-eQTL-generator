@@ -1,0 +1,157 @@
+import pandas as pd
+import random
+
+# Load the data
+chr_df = pd.read_csv(
+    r'the chromosome length file',
+    delim_whitespace=True)
+gene_df = pd.read_csv(
+    r'the gene name file',
+    delim_whitespace=True)
+with open(r'the eQTL length distribution file','r') as fi:
+    txt = fi.readlines()
+for line in txt:
+    line = int(line.strip())
+# Function to generate a random region on a chromosome within specified ranges, and the random region length was randomly selected from the eQTL length distribution file
+def generate_random_region(chr_lengths):
+    chromosome = random.choice(list(chr_lengths.keys()))
+    chr_length = chr_lengths[chromosome]
+    start = int(random.randint(0, chr_length))
+    length = int(random.choice(txt))
+    end = start + length
+    while end > chr_length:
+        length = int(random.choice(txt))
+        end = start + length
+    return (chromosome, start, end)
+
+
+# Function to check if regions overlap
+def regions_overlap(region1, region2):
+    chr1, start1, end1 = region1
+    chr2, start2, end2 = region2
+    if chr1 != chr2:
+        return False
+    return not (end1 <= start2 or end2 <= start1)
+
+
+# Prepare chromosome lengths dictionary
+chr_lengths = dict(zip(chr_df['chr'], chr_df['length']))
+
+# Specify the times of following operation
+for run in range(1, x):
+    # Randomly select 1000 genes
+    selected_genes = gene_df.sample(n=1000)
+
+    # Generate random regions for each selected gene
+    results = []
+
+    # Define the number of genes and corresponding regions, "xn" represents the frequency, which following the same distribution with the corresponding eQTL numbers of eGenes
+    num_genes = 1000
+    num_genes_with_one_region = int(x1 * num_genes)
+    num_genes_with_two_regions = int(x2 * num_genes)
+    num_genes_with_three_regions = int(x3 * num_genes)
+    num_genes_with_four_regions = int(x4 * num_genes)
+    num_genes_with_five_regions = int(x5 * num_genes)
+    num_genes_with_multiple_regions = num_genes - num_genes_with_one_region - num_genes_with_two_regions - num_genes_with_three_regions - num_genes_with_four_regions - num_genes_with_five_regions
+
+    # Generate regions for genes with one corresponding region
+    for index, gene in selected_genes.iloc[:num_genes_with_one_region].iterrows():
+        gene_name = gene['Gene']
+        region = generate_random_region(chr_lengths)
+        region_chr, region_start, region_end = region
+
+        results.append((gene_name, region_chr, region_start, region_end))
+
+    # Generate regions for genes with two corresponding regions
+    for index, gene in selected_genes.iloc[
+                       num_genes_with_one_region:num_genes_with_one_region + num_genes_with_two_regions].iterrows():
+        gene_name = gene['Gene']
+        num_regions = 2
+        gene_regions = []
+        for _ in range(num_regions):
+            while True:
+                region = generate_random_region(chr_lengths)
+                if all(not regions_overlap(region, existing_region) for existing_region in gene_regions):
+                    gene_regions.append(region)
+                    break
+        for region in gene_regions:
+            region_chr, region_start, region_end = region
+            results.append((gene_name, region_chr, region_start, region_end))
+
+    # Generate regions for genes with three corresponding regions
+    for index, gene in selected_genes.iloc[
+                       num_genes_with_one_region + num_genes_with_two_regions:num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions].iterrows():
+        gene_name = gene['Gene']
+        num_regions = 3
+        gene_regions = []
+        for _ in range(num_regions):
+            while True:
+                region = generate_random_region(chr_lengths)
+                if all(not regions_overlap(region, existing_region) for existing_region in gene_regions):
+                    gene_regions.append(region)
+                    break
+        for region in gene_regions:
+            region_chr, region_start, region_end = region
+            results.append((gene_name, region_chr, region_start, region_end))
+
+    # Generate regions for genes with four corresponding regions
+    for index, gene in selected_genes.iloc[
+                       num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions:num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions + num_genes_with_four_regions].iterrows():
+        gene_name = gene['Gene']
+        num_regions = 4
+        gene_regions = []
+        for _ in range(num_regions):
+            while True:
+                region = generate_random_region(chr_lengths)
+                if all(not regions_overlap(region, existing_region) for existing_region in gene_regions):
+                    gene_regions.append(region)
+                    break
+        for region in gene_regions:
+            region_chr, region_start, region_end = region
+            results.append((gene_name, region_chr, region_start, region_end))
+
+    # Generate regions for genes with five corresponding regions
+    for index, gene in selected_genes.iloc[
+                       num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions + num_genes_with_four_regions:num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions + num_genes_with_four_regions + num_genes_with_five_regions].iterrows():
+        gene_name = gene['Gene']
+        num_regions = 5
+        gene_regions = []
+        for _ in range(num_regions):
+            while True:
+                region = generate_random_region(chr_lengths)
+                if all(not regions_overlap(region, existing_region) for existing_region in gene_regions):
+                    gene_regions.append(region)
+                    break
+        for region in gene_regions:
+            region_chr, region_start, region_end = region
+            results.append((gene_name, region_chr, region_start, region_end))
+
+    # Generate regions for genes with multiple corresponding regions
+    for index, gene in selected_genes.iloc[
+                       num_genes_with_one_region + num_genes_with_two_regions + num_genes_with_three_regions + num_genes_with_four_regions + num_genes_with_five_regions:].iterrows():
+        gene_name = gene['Gene']
+        num_regions = random.randint(6, 10)
+        gene_regions = []
+        for _ in range(num_regions):
+            while True:
+                region = generate_random_region(chr_lengths)
+                if all(not regions_overlap(region, existing_region) for existing_region in gene_regions):
+                    gene_regions.append(region)
+                    break
+        for region in gene_regions:
+            region_chr, region_start, region_end = region
+            results.append((gene_name, region_chr, region_start, region_end))
+
+    # Create a DataFrame to store the results
+    results_df = pd.DataFrame(results, columns=['Gene', 'Chr', 'start', 'end'])
+
+    # Generate output file name with a serial number
+    output_file_name = r'filepath\random_regions_with_genes-{}.txt'.format(run)
+
+    # Save to a file
+    results_df.to_csv(output_file_name, sep='\t', index=False)
+
+    # Print a message to track progress
+    print(f'Run {run} completed and saved to {output_file_name}')
+
+print('All runs completed.')
